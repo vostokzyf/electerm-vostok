@@ -7,7 +7,7 @@ module.exports = exports.default = {
   sshReadyTimeout: 50000,
   scrollback: 3000,
   onStartSessions: [],
-  fontSize: 16,
+  fontSize: 13,
   fontFamily: 'Maple Mono, mono, courier-new, courier, monospace',
   execWindows: 'System32/WindowsPowerShell/v1.0/powershell.exe',
   execMac: 'zsh',
@@ -52,7 +52,7 @@ module.exports = exports.default = {
     'network',
     'disks'
   ],
-  remoteMonitorBarEnabled: false,
+  remoteMonitorBarEnabled: true,
   remoteMonitorBarItems: [
     'hostname',
     'cpu',
@@ -79,7 +79,7 @@ module.exports = exports.default = {
   authHeaderNameAI: 'Authorization: Bearer',
   proxyAI: '',
   sessionLogPath: '',
-  sshSftpSplitView: false,
+  sshSftpSplitView: true,
   showCmdSuggestions: false,
   restoreTerminalSessionOnReload: false,
   startDirectoryLocal: '',

@@ -5,6 +5,7 @@ import {
   splitConfig,
   quickCommandBoxHeight,
   footerHeight,
+  topToolbarHeight,
   remoteMonitorBarHeight,
   shortcutBarHeight
 } from '../../common/constants'
@@ -12,6 +13,7 @@ import layoutAlg from './layout-alg'
 import calcSessionSize from './session-size-alg'
 import TermSearch from '../terminal/term-search'
 import Footer from '../footer/footer-entry'
+import TopToolbar from './top-toolbar'
 import RemoteMonitorBar from '../remote-monitor/remote-monitor-bar-entry'
 import { isRemoteMonitorBarVisible } from '../remote-monitor/visibility'
 import SessionsWrap from '../session/sessions'
@@ -57,12 +59,12 @@ export default auto(function Layout (props) {
       !quickCommandsInRightPanel
       ? quickCommandBoxHeight
       : 0
-    const h = height - footerHeight - monitorHeight - qmPinnedHeight - (shortcutBarVisible ? shortcutBarHeight + shortcutBarKbOffset : 0) + resizeTrigger
+    const h = height - footerHeight - topToolbarHeight - monitorHeight - qmPinnedHeight - (shortcutBarVisible ? shortcutBarHeight + shortcutBarKbOffset : 0) + resizeTrigger
     const l = pinned && !isMobile ? leftSideBarWidth + leftSidePanelWidth : leftSideBarWidth
     const r = rightPanelVisible && rightPanelPinned && !isMobile ? rightPanelWidth : 0
     return {
       height: h,
-      top: 0,
+      top: topToolbarHeight,
       left: l,
       width: Math.max(0, width - l - r)
     }
@@ -181,6 +183,7 @@ export default auto(function Layout (props) {
     layout
   }
   return [
+    <TopToolbar key='TopToolbar' store={store} />,
     <Layouts {...layoutProps} key='layouts'>
       {renderSessions(conf, layout)}
     </Layouts>,

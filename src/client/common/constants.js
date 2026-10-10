@@ -81,6 +81,7 @@ export const authTypeMap = buildConst([
 ])
 
 export const footerHeight = 36
+export const topToolbarHeight = 34
 export const remoteMonitorBarHeight = 28
 export const quickCommandBoxHeight = 180
 export const shortcutBarHeight = 44

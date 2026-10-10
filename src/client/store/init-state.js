@@ -53,6 +53,10 @@ export default () => {
   // saved preference ('true'/'false') from localStorage.
   const storedSideBarOpen = ls.getItem(leftSideBarOpenKey)
   const leftSideBarOpen = storedSideBarOpen === '' ? true : storedSideBarOpen === 'true'
+  // FinalShell-style: left bookmarks panel pinned open on first run; once the
+  // user toggles it, honor the saved preference.
+  const storedPinned = ls.getItem(sidebarPinnedKey)
+  const pinnedDefault = storedPinned === '' ? true : storedPinned === 'true'
   return {
     // common
     wsInited: false,
@@ -192,13 +196,13 @@ export default () => {
     shortcutBarKbOffset: 0,
 
     // sidebar
-    openedSideBar: ls.getItem(openedSidebarKey) || '',
+    openedSideBar: ls.getItem(openedSidebarKey) || 'bookmarks',
     _leftSidePanelWidth: parseInt(ls.getItem(leftSidePanelWidthKey), 10) || 300,
     // whether the far-left icon bar is open (hide/show works on every platform)
     _leftSideBarOpen: leftSideBarOpen,
     addPanelWidth: parseInt(ls.getItem(addPanelWidthLsKey), 10) || 300,
     menuOpened: false,
-    pinned: ls.getItem(sidebarPinnedKey) === 'true',
+    pinned: pinnedDefault,
 
     // info/help modal
     showInfoModal: false,

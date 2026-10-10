@@ -7,7 +7,7 @@ export default {
   sshReadyTimeout: 50000,
   scrollback: 3000,
   onStartSessions: [],
-  fontSize: 16,
+  fontSize: 13,
   fontFamily: 'Maple Mono, mono, courier-new, courier, monospace',
   execWindows: 'System32/WindowsPowerShell/v1.0/powershell.exe',
   execMac: 'zsh',
@@ -58,7 +58,7 @@ export default {
     'network',
     'disks'
   ],
-  remoteMonitorBarEnabled: false,
+  remoteMonitorBarEnabled: true,
   remoteMonitorBarItems: [
     'hostname',
     'cpu',
@@ -84,7 +84,7 @@ export default {
   apiPathAI: '/chat/completions',
   proxyAI: '',
   sessionLogPath: '',
-  sshSftpSplitView: false,
+  sshSftpSplitView: true,
   showCmdSuggestions: false,
   autoReconnectTerminal: false,
   restoreTerminalSessionOnReload: false,
