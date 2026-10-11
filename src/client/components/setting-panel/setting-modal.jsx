@@ -111,20 +111,11 @@ export default auto(function SettingModalWrap (props) {
         children: null
       },
       {
-        key: settingMap.triggers,
-        label: <span>{e('triggers')} <sup>Beta</sup></span>,
-        children: null
-      },
-      {
         key: settingMap.profiles,
         label: e(settingMap.profiles),
         children: null
-      },
-      {
-        key: settingMap.widgets,
-        label: <>{e(settingMap.widgets)} <sup>Beta</sup></>,
-        children: null
       }
+      // FinalShell-style fork: 触发器 / 小组件 tabs hidden (too advanced)
     ]
     const tabsProps = {
       activeKey: settingTab,

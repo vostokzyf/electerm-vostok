@@ -363,7 +363,10 @@ export default class FileListTable extends Component {
 
   render () {
     const { fileList, height, type } = this.props
-    const containerHeight = height - 42 - 30 - 32 - 90
+    // FinalShell-style fork: docked panel chrome = panel title 32 + address
+    // bar 42 + table header 30 + panel padding 10. The flex layout in sftp.styl
+    // makes the list fill the rest, so just subtract the real chrome.
+    const containerHeight = Math.max(40, height - 42 - 30 - 32 - 10)
     const props = {
       ref: this.containerRef,
       className: 'sftp-table-content overscroll-y relative',

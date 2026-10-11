@@ -5,8 +5,6 @@ import {
   settingAiId,
   settingPasswordsId
 } from '../common/constants'
-import { isAIDisabled } from './ai-feature'
-
 const e = window.translate
 
 export default () => {
@@ -32,8 +30,8 @@ export default () => {
       title: e('password')
     }
   ]
-  if (isAIDisabled()) {
-    return list.filter(item => item.id !== settingAiId)
-  }
-  return list
+  // FinalShell-style fork: keep only 通用(default) / 终端 / 连接相关(密码);
+  // hide AI, 同步, 快捷键 sections
+  const hiddenIds = [settingAiId, settingSyncId, settingShortcutsId]
+  return list.filter(item => !hiddenIds.includes(item.id))
 }

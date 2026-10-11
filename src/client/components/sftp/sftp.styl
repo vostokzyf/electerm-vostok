@@ -3,6 +3,17 @@
   flex-direction row
 .sftp-section
   flex 1
+  display flex
+  flex-direction column
+  min-height 0
+  // FinalShell-style fork: let the panel fill the dock height so the file
+  // list actually uses the space instead of leaving a gap at the bottom
+  .ant-spin-nested-loading,
+  .ant-spin-container
+    flex 1
+    display flex
+    flex-direction column
+    min-height 0
 .sftp-title-wrap
   position relative
 .sftp-item
@@ -156,10 +167,23 @@
 //sftp
 .sftp-panel
   background var(--main)
+  flex 1
+  display flex
+  flex-direction column
+  min-height 0
 
 .file-list
+  flex 1
+  min-height 0
+  display flex
+  flex-direction column
   ::-webkit-scrollbar-thumb
     background-color var(--primary) !important
+  .sftp-table
+    flex 1
+    display flex
+    flex-direction column
+    min-height 0
 
 .pager-wrap
   z-index 4

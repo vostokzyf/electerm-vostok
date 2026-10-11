@@ -22,8 +22,11 @@ import {
   terminalWebType,
   terminalTelnetType,
   terminalFtpType,
-  terminalSpiceType
+  terminalSpiceType,
+  sftpDockHeightKey,
+  defaultSftpDockHeight
 } from '../../common/constants'
+import * as ls from '../../common/safe-local-storage'
 import { refs } from '../common/ref'
 import sanitizeFilename from '../../common/sanitize-filename.js'
 import SessionControl from './session-control'
@@ -34,6 +37,16 @@ const RdpSession = lazy(() => import('../rdp/rdp-session'))
 const VncSession = lazy(() => import('../vnc/vnc-session'))
 const WebSession = lazy(() => import('../web/web-session.jsx'))
 const SpiceSession = lazy(() => import('../spice/spice-session'))
+
+// FinalShell-style fork: file manager is docked at the bottom with a fixed
+// height (draggable). Returns the persisted dock height in px.
+function getSftpDockPx () {
+  const stored = parseInt(ls.getItem(sftpDockHeightKey), 10)
+  if (Number.isFinite(stored) && stored >= 120 && stored <= 600) {
+    return stored
+  }
+  return defaultSftpDockHeight
+}
 const e = window.translate
 const SplitterPane = Splitter.Panel
 
@@ -45,7 +58,8 @@ export default class SessionWrapper extends Component {
       cwd: '',
       sftpPathFollowSsh: !!props.config.sftpPathFollowSsh,
       key: Math.random(),
-      splitSize: [50, 50],
+      // FinalShell-style fork: bottom-docked file manager height in px
+      sftpDockPx: getSftpDockPx(),
       sessionOptions: null,
       broadcastInput: false,
       keepaliveEnabled: false,
@@ -103,14 +117,8 @@ export default class SessionWrapper extends Component {
     if (!sshSftpSplitView || !this.canSplitView()) {
       return 'tabed'
     }
-    const {
-      width,
-      height
-    } = this.props
-    const ratio = width / height
-    const baseRatio = this.minWithForSplit / this.minHeightForSplit
-    const wider = ratio > baseRatio
-    return wider ? 'leftRight' : 'topDown'
+    // FinalShell-style fork: file manager always docked at the bottom
+    return 'topDown'
   }
 
   handleClick = () => {
@@ -367,6 +375,19 @@ export default class SessionWrapper extends Component {
       type === terminalSpiceType
   }
 
+  // FinalShell-style fork: the splitter's real height (tab bar + control bar
+  // excluded), so the bottom dock is never hidden behind the footer
+  getSplitterHeight = () => {
+    return this.props.computeHeight(this.props.height)
+  }
+
+  // FinalShell-style fork: dock height as % of the splitter height
+  getDockPct = () => {
+    const h = this.getSplitterHeight() || 800
+    const px = Math.min(Math.max(this.state.sftpDockPx, 120), h - 160)
+    return px * 100 / h
+  }
+
   calcSftpWidthHeight = () => {
     const {
       width,
@@ -378,13 +399,11 @@ export default class SessionWrapper extends Component {
         height
       }
     }
-    const direction = this.getSplitDirection()
-    const [, size2] = this.state.splitSize
-    const w = direction === 'leftRight' ? size2 * width / 100 : width
-    const h = direction === 'leftRight' ? height : size2 * height / 100
+    const size2 = this.getDockPct()
+    const sh = this.getSplitterHeight()
     return {
-      width: w,
-      height: h
+      width,
+      height: size2 * sh / 100
     }
   }
 
@@ -399,13 +418,10 @@ export default class SessionWrapper extends Component {
         height
       }
     }
-    const direction = this.getSplitDirection()
-    const [size1] = this.state.splitSize
-    const w = direction === 'leftRight' ? size1 * width / 100 : width
-    const h = direction === 'leftRight' ? height : size1 * height / 100
+    const size1 = 100 - this.getDockPct()
     return {
-      width: w,
-      height: h
+      width,
+      height: size1 * height / 100
     }
   }
 
@@ -529,16 +545,16 @@ export default class SessionWrapper extends Component {
   }
 
   onSplitResize = (sizes) => {
-    const direction = this.getSplitDirection()
-    const {
-      width,
-      height
-    } = this.props
-    const all = direction === 'leftRight' ? width : height
-    const size = sizes.map(d => d * 100 / all)
-    this.setState({
-      splitSize: size
-    })
+    // FinalShell-style fork: split is always top-down; sizes are px,
+    // sizes[1] is the bottom-docked file manager height — persist it
+    if (Number.isFinite(sizes[1])) {
+      const h = this.getSplitterHeight() || 800
+      const px = Math.min(Math.max(Math.round(sizes[1]), 120), h - 160)
+      this.setState({
+        sftpDockPx: px
+      })
+      ls.setItem(sftpDockHeightKey, String(px))
+    }
   }
 
   renderViews = () => {
@@ -549,9 +565,10 @@ export default class SessionWrapper extends Component {
     const { pane } = this.props.tab
     const show1 = notSplitVew && pane === paneMap.terminal
     const show2 = notSplitVew && pane === paneMap.fileManager
-    const direction = this.getSplitDirection()
-    const layout = direction === 'leftRight' ? 'horizontal' : 'vertical'
-    const [size1, size2] = this.state.splitSize
+    // FinalShell-style fork: always vertical (top-down) split
+    const layout = 'vertical'
+    const size2 = this.getDockPct()
+    const size1 = 100 - size2
     const splitterProps = {
       orientation: layout,
       onResize: this.onSplitResize,
@@ -559,7 +576,9 @@ export default class SessionWrapper extends Component {
       className: notSplitVew ? 'not-split-view' : '',
       style: {
         width: this.props.width + 'px',
-        height: this.props.height + 'px'
+        // FinalShell-style fork: use the real content height so the bottom
+        // dock is fully visible instead of overflowing behind the footer
+        height: this.getSplitterHeight() + 'px'
       }
     }
     const paneProps = {

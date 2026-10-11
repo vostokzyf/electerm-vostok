@@ -163,6 +163,9 @@ export const cmdHistoryInRightPanelKey = 'cmd-history-in-right-panel'
 export const quickCommandsInRightPanelKey = 'quick-commands-in-right-panel'
 export const addPanelWidthLsKey = 'addPanelWidth'
 export const sftpDefaultSortSettingKey = 'sftp-default-sort'
+// FinalShell-style fork: bottom-docked file manager panel height (px)
+export const sftpDockHeightKey = 'sftp-dock-height'
+export const defaultSftpDockHeight = 260
 export const qmSortByFrequencyKey = 'qm-sort-by-frequency'
 
 export const commonBaudRates = [

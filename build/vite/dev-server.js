@@ -28,6 +28,8 @@ const base = {
   version: pack.version,
   isDev: !isProd,
   siteName: pack.name,
+  // FinalShell-style fork: hide every AI entry point (isAIDisabled() gates)
+  disableAIFeature: true,
   defaultAIPreset
 }
 

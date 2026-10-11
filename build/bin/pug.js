@@ -33,6 +33,8 @@ const data = {
   version: pack.version,
   siteName: pack.name,
   isDev: false,
+  // FinalShell-style fork: hide every AI entry point (isAIDisabled() gates)
+  disableAIFeature: true,
   defaultAIPreset,
   // The entry bundle statically imports ~190 chunks. index.html is built here
   // rather than by Vite, so Vite's automatic modulepreload injection never ran

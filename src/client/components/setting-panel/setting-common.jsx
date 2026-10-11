@@ -18,7 +18,6 @@ import deepCopy from 'json-deep-copy'
 import Password from '../common/password'
 import InputConfirm from '../common/input-confirm'
 import InputNumberConfirm from '../common/input-number-confirm'
-import TextareaConfirm from '../common/textarea-confirm'
 import {
   settingMap,
   proxyHelpLink,
@@ -409,8 +408,7 @@ export default class SettingCommon extends Component {
     const {
       hotkey,
       language,
-      theme,
-      customCss
+      theme
     } = props.config
     const {
       langs = []
@@ -517,15 +515,7 @@ export default class SettingCommon extends Component {
           </Select>
         </div>
 
-        <div className='pd2b'>
-          <span className='inline-title mg1r'>{e('customCss')}</span>
-          <HelpIcon link='https://github.com/electerm/electerm/wiki/Custom-CSS-examples' />
-          <TextareaConfirm
-            onChange={this.handleCustomCss}
-            value={customCss}
-            rows={3}
-          />
-        </div>
+        {/* FinalShell-style fork: custom CSS hidden (advanced) */}
 
         <div className='pd2b'>
           <span className='inline-title mg1r'>{e('language')}</span>
@@ -545,47 +535,26 @@ export default class SettingCommon extends Component {
           </Select>
           <Link className='mg1l' to={createEditLangLink(language)}>{e('edit')}</Link>
         </div>
-        <div className='pd1b'>{e('default')} {e('execWindows')}</div>
-        {
-          this.renderTextExec('execWindows')
-        }
-        <div className='pd1b'>{e('default')} {e('execMac')}</div>
-        {
-          this.renderTextExec('execMac')
-        }
-        <div className='pd1b'>{e('default')} {e('execLinux')}</div>
-        {
-          this.renderTextExec('execLinux')
-        }
-        <div className='pd1b'>{e('keyword2FA')}</div>
-        {
-          this.renderText('keyword2FA')
-        }
+        {/* FinalShell-style fork: default exec paths / 2FA keyword hidden (advanced) */}
         {
           [
             'autoRefreshWhenSwitchToSftp',
             'showHiddenFilesOnSftpStart',
-            'screenReaderMode',
             'initDefaultTabOnStart',
             'disableConnectionHistory',
             'disableTransferHistory',
             'checkUpdateOnStart',
-            'useSystemTitleBar',
             'confirmBeforeExit',
-            'hideIP',
-            'allowMultiInstance',
-            'disableDeveloperTool',
-            'switchTabOnHover',
-            'doubleClickToOpenBookmark',
-            'disableTabIndex',
-            'onlyShowTitleInTab',
-            'disableShortcutBar',
-            'autoDistributeTabsWhenLayoutChange',
-            'debug'
+            'hideIP'
           ]
             .filter(name => (!isWebApp || !webAppHiddenSettings.includes(name)) &&
               !(isWin && name === 'useSystemTitleBar'))
             .map(this.renderToggle)
+          // FinalShell-style fork: advanced toggles hidden —
+          // screenReaderMode, useSystemTitleBar, allowMultiInstance,
+          // disableDeveloperTool, switchTabOnHover, doubleClickToOpenBookmark,
+          // disableTabIndex, onlyShowTitleInTab, disableShortcutBar,
+          // autoDistributeTabsWhenLayoutChange, debug
         }
         {
           window.et.isWebApp ? null : <InstallCommand />
