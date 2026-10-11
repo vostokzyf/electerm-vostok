@@ -301,6 +301,44 @@ function initIpc () {
           .filter(k => process.env[k] !== undefined)
           .map(k => [k, process.env[k]])
       )
+    },
+    // Local machine hardware monitor for the sidebar "本机监控" panel.
+    // Runs in the main process (renderer has no node integration).
+    // Missing sensors are returned as null and hidden by the UI — never faked.
+    getLocalSysInfo: async () => {
+      const si = require('systeminformation')
+      const withTimeout = (p, ms) => Promise.race([
+        p,
+        new Promise((resolve) => setTimeout(() => resolve(null), ms))
+      ])
+      const num = (v) => {
+        const n = Number(v)
+        return Number.isFinite(n) ? n : null
+      }
+      const [load, temp, mem, graphics] = await Promise.all([
+        withTimeout(si.currentLoad(), 2500),
+        withTimeout(si.cpuTemperature(), 2500),
+        withTimeout(si.mem(), 2500),
+        withTimeout(si.graphics(), 4000)
+      ])
+      const gpus = ((graphics && graphics.controllers) || [])
+        .filter((c) => /nvidia/i.test(c.vendor || ''))
+        .map((c) => ({
+          name: c.model || 'NVIDIA GPU',
+          util: num(c.utilizationGpu),
+          temp: num(c.temperatureGpu),
+          power: num(c.powerDraw),
+          vramUsed: num(c.memoryUsed),
+          vramTotal: num(c.memoryTotal)
+        }))
+      return {
+        cpu: {
+          load: load ? num(load.currentLoad) : null,
+          temp: temp && temp.main != null ? num(temp.main) : null
+        },
+        mem: mem ? { used: mem.used, total: mem.total } : null,
+        gpus
+      }
     }
   }
   ipcMain.handle('async', (event, { name, args }) => {

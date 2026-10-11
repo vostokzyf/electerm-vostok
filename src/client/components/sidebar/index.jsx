@@ -229,6 +229,7 @@ export default function Sidebar (props) {
         leftSidePanelWidth={leftSidePanelWidth}
         leftSideBarWidth={leftSideBarWidth}
         isMobile={isMobile}
+        panelOpen={!!openedSideBar}
       >
         <SideBarPanel
           pinned={pinnedActive}

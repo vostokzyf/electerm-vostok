@@ -1,5 +1,6 @@
 import { useCallback, useRef } from 'react'
 import DragHandle from '../common/drag-handle'
+import LocalMonitor from './local-monitor'
 
 export default function SidePanel (props) {
   const panelRef = useRef(null)
@@ -41,6 +42,10 @@ export default function SidePanel (props) {
     >
       {dragHandle}
       {props.children}
+      {
+        // 本机监控 only polls while the panel is open
+        props.panelOpen ? <LocalMonitor /> : null
+      }
     </div>
   )
 }
